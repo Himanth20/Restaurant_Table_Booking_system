@@ -1,0 +1,58 @@
+# Maven build artifacts
+target/
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# IDE Configuration
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build and logs
+log/
+logs/
+*.log
+build/
+dist/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env
+.env.local
+*.properties.local
+
+# Node modules (if frontend is added)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker volumes
+mysql_data/
+app_data/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/MavenWrapperDownloader.java
