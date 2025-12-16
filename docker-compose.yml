@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql-db:
+    image: mysql:8.0
+    container_name: restaurant_booking_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: restaurant_booking
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+      MYSQL_TCP_PORT: 3306
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - booking_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      timeout: 20s
+      retries: 5
+      interval: 10s
+
+  # Java Spring Boot Application Service
+  booking-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurant_booking_app
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/restaurant_booking
+      SPRING_DATASOURCE_USERNAME: app_user
+      SPRING_DATASOURCE_PASSWORD: app_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - booking_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/bookings"]
+      timeout: 10s
+      retries: 5
+      interval: 30s
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  booking_network:
+    driver: bridge
